@@ -35,7 +35,7 @@ class CrawlerFacade:
                 errs = f"errors = {e}, retry funcode = {fund_codes[i]}"
                 if "_id_ dup key" in errs:
                     i = i + 1
-                logger.error(f"errors = {e}, retry funcode = {fund_code}")
+                logger.error(f"errors = {e}, retry funcode = {fund_codes[i]}")
         print()
     
     # 更新所有基金的历史持仓数据
@@ -44,15 +44,16 @@ class CrawlerFacade:
         i = 0
         while i < len(fund_codes): 
             try: 
-                print('\r', f'更新所有基金的历史持仓数据：{i + 1} / {len(fund_codes)}', end='', flush=True)
+                print('\r', f'更新基金的历史持仓数据：{i + 1} / {len(fund_codes)}', end='', flush=True)
                 self.fundStockShare.crawlFundStockShareList(fund_code=fund_codes[i])
+                logger.info(f'更新基金{fund_codes[i - 1]}的历史持仓完成！')
                 i = i + 1
             except Exception as e:
                 time.sleep(random.randint(5, 10))
                 errs = f"errors = {e}, retry funcode = {fund_codes[i]}"
                 if "_id_ dup key" in errs:
                     i = i + 1
-                logger.error(f"errors = {e}, retry funcode = {fund_code}")
+                logger.error(f"errors = {e}, retry funcode = {fund_codes[i]}")
         print()
     
     # 更新所有基金的分红数据
@@ -93,8 +94,8 @@ class CrawlerFacade:
 if __name__ == '__main__':
     crawler = CrawlerFacade()
     # crawler.updateAllFundList()
-    crawler.updateFundsTradeHistory()
-    # crawler.updateFundStockShareHistory()
+    # crawler.updateFundsTradeHistory()
+    crawler.updateFundStockShareHistory()
     # crawler.updateFundDividendHistory()
     driver.close()
     driver.quit()

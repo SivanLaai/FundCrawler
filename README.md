@@ -1,5 +1,6 @@
-# FundCrawler
+# 轻量级基金爬虫
 基金指标爬虫，抓取市面上所有基金信息\基金净值\基金成分\基金公司\基金经理
+scrapy的框架太过厚重了，选用requests\execjs\lxml\selenium搭建了一个轻量级爬虫，可扩展性强，易于使用。
 ## 基金基本信息爬虫 AllFundCrawler
 从网站上抓取所有开放基金的基本信息。
 ![Image text](/img/jbxx.png)
@@ -13,8 +14,10 @@
 
 ## 基金净值爬虫 FundTradeCrawler
 抓取基金的过往历史数据，用于分析。
+![Image text](/img/jjjz.png)
 
 # 使用方法
+### 0 python安装requests,lxml,pymongo,execjs,selenium
 ### 1 安装mongodb，最好配置用户权限，以免被攻击
 ### 2 配置setting
 ```bash
