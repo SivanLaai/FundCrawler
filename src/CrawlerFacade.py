@@ -23,13 +23,20 @@ class CrawlerFacade:
     # 更新所有基金的历史交易数据
     def updateFundsTradeHistory(self):
         fund_codes = self.allFundCrawler.getAllFundsCode()
-        for i in range(len(fund_codes)):
-            self.fundTradeCrawler.crawlHistoryList(fund_code=fund_codes[i])
-            print('\r', f'更新所有基金的历史交易数据：{i + 1} / {len(fund_codes)}', end='', flush=True)
-            if i % 110:
+        i = 0
+        while i < len(fund_codes): 
+            try: 
+                self.fundTradeCrawler.crawlHistoryList(fund_code=fund_codes[i])
+                print('\r', f'更新基金的历史交易数据：{i + 1} / {len(fund_codes)}', end='', flush=True)
+                i = i + 1
+                logger.info(f'更新基金{fund_codes[i - 1]}的历史交易数据完成！')
+            except Exception as e:
                 time.sleep(random.randint(5, 10))
-            else:
-                time.sleep(0.3)
+                errs = f"errors = {e}, retry funcode = {fund_codes[i]}"
+                if "_id_ dup key" in errs:
+                    i = i + 1
+                logger.error(f"errors = {e}, retry funcode = {fund_code}")
+        print()
     
     # 更新所有基金的历史持仓数据
     def updateFundStockShareHistory(self):
@@ -45,7 +52,7 @@ class CrawlerFacade:
                 errs = f"errors = {e}, retry funcode = {fund_codes[i]}"
                 if "_id_ dup key" in errs:
                     i = i + 1
-                print(f"errors = {e}, retry funcode = {fund_codes[i]}")
+                logger.error(f"errors = {e}, retry funcode = {fund_code}")
         print()
     
     # 更新所有基金的分红数据
@@ -66,7 +73,7 @@ class CrawlerFacade:
                 i = i + 1
             except Exception as e:
                 time.sleep(random.randint(5, 10))
-                print(f"errors = {e}, retry funcode = {fund_code}")
+                logger.error(f"errors = {e}, retry funcode = {fund_code}")
         print()
     
 
@@ -86,8 +93,8 @@ class CrawlerFacade:
 if __name__ == '__main__':
     crawler = CrawlerFacade()
     # crawler.updateAllFundList()
-    # crawler.updateFundsTradeHistory()
-    crawler.updateFundStockShareHistory()
+    crawler.updateFundsTradeHistory()
+    # crawler.updateFundStockShareHistory()
     # crawler.updateFundDividendHistory()
     driver.close()
     driver.quit()

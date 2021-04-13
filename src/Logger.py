@@ -25,7 +25,7 @@ class Log(object):
         self.logger.handlers.clear()
 
         # log_path是存放日志的路径
-        service_name = "resume_service"
+        service_name = "FundCrawler"
         timestr = time.strftime("%Y_%m_%d", time.localtime(time.time()))
         lib_path = config['LOG']['LOG_PATH']
         # 如果不存在这个logs文件夹，就自动创建一个
