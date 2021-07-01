@@ -19,6 +19,26 @@ class DataControl:
         allFundCol = self.mydb[config["MONGO"]["ALL_FUND_COLLECTION"]]
         allFundList = allFundCol.find()
         return list(allFundList)
+    
+    def batchInsert(self, table_name, datas):
+        if len(datas) <= 0:
+            return True
+        fundTradeCol = self.mydb[config["MONGO"][table_name]]
+        no_exist_list = list()
+
+        # 当前的表格中存在与插入的数据相同的数据，则直接返回False
+        for data in datas:
+            # print(fundTradeInfos)
+            if fundTradeCol.find_one({"_id": data['_id']}) is not None:
+                if len(no_exist_list) <= 0:
+                    return False
+                fundTradeCol.insert_many(no_exist_list)
+                return False
+            no_exist_list.append(data)
+        fundTradeCol.insert_many(datas)
+        # print(datas)
+        return True
+
 
     '''
     批量的向数据表格中插入数据，如果表格中有这些数据那么就不在插入
@@ -71,6 +91,13 @@ class DataControl:
             no_exist_list.append(data)
         fundStockShareCol.insert_many(fundStockShareInfos)
         return True
+
+    def FundStockShareExsits(self, fund_code):
+        fundStockShareCol = self.mydb[config["MONGO"]["FUND_STOCK_SHARE_COLLECTION"]]
+        if fundStockShareCol.find_one({"fund_code": fund_code}) is not None:
+            return True
+        return False
+    
     
     '''
     批量的向数据表格中插入数据，如果表格中有这些数据那么就不在插入
@@ -97,6 +124,109 @@ class DataControl:
         fundDividendCol.insert_many(fundDividendInfos)
         return True
     
+    '''
+    批量的向数据表格中插入数据，如果表格中有这些数据那么就不在插入
+    - Paramaters:
+        fundReviewInfos ： 代插入的数据，同行评级
+    - Return:
+        Flase: 当前所有的数据都不存在于表格中 
+        True: 当前的数据在表格中有重复数据
+    '''
+    def insertFundReviewInfos(self, fundReviewInfos = []):
+        if len(fundReviewInfos) <= 0:
+            return True
+        fundViewCol = self.mydb[config["MONGO"]["FUND_REVIEW_COLLECTION"]]
+        no_exist_list = list()
+
+        # 当前的表格中存在与插入的数据相同的数据，则直接返回False
+        for data in fundReviewInfos:
+            # print(fundTradeInfos)
+            if fundViewCol.find_one({"_id": data['_id']}) is not None:
+                if len(no_exist_list) <= 0:
+                    return False
+                fundViewCol.insert_many(no_exist_list)
+                return False
+            no_exist_list.append(data)
+        fundViewCol.insert_many(fundReviewInfos)
+        return True
+    
+    '''
+    批量的向数据表格中插入数据，如果表格中有这些数据那么就不在插入
+    - Paramaters:
+        fundIndustryInfos ： 代插入的数据，行业配置
+    - Return:
+        Flase: 当前所有的数据都不存在于表格中 
+        True: 当前的数据在表格中有重复数据
+    '''
+    def insertFundIndustryInfos(self, fundIndustryInfos = []):
+        if len(fundIndustryInfos) <= 0:
+            return True
+        Col = self.mydb[config["MONGO"]["FUND_INDUSTRY_COLLECTION"]]
+        no_exist_list = list()
+
+        # 当前的表格中存在与插入的数据相同的数据，则直接返回False
+        for data in fundIndustryInfos:
+            # print(fundTradeInfos)
+            if Col.find_one({"_id": data['id']}) is not None:
+                if len(no_exist_list) <= 0:
+                    return False
+                Col.insert_many(no_exist_list)
+                return False
+            no_exist_list.append(data)
+        Col.insert_many(fundIndustryInfos)
+        return True
+    
+    '''
+    批量的向数据表格中插入数据，如果表格中有这些数据那么就不在插入
+    - Paramaters:
+        Infos ： 代插入的数据，基金的基金经理历史数据
+    - Return:
+        Flase: 当前所有的数据都不存在于表格中 
+        True: 当前的数据在表格中有重复数据
+    '''
+    def insertFundManagerHistoryInfos(self, Infos = []):
+        if len(Infos) <= 0:
+            return True
+        Col = self.mydb[config["MONGO"]["FUND_MANAGER_HISTORY_COLLECTION"]]
+        no_exist_list = list()
+
+        # 当前的表格中存在与插入的数据相同的数据，则直接返回False
+        for data in Infos:
+            # print(fundTradeInfos)
+            if Col.find_one({"_id": data['_id']}) is not None:
+                if len(no_exist_list) <= 0:
+                    return False
+                Col.insert_many(no_exist_list)
+                return False
+            no_exist_list.append(data)
+        Col.insert_many(Infos)
+        return True
+    
+    '''
+    批量的向数据表格中插入数据，如果表格中有这些数据那么就不在插入
+    - Paramaters:
+        Infos ： 代插入的数据，基金的基金经理历史数据
+    - Return:
+        Flase: 当前所有的数据都不存在于表格中 
+        True: 当前的数据在表格中有重复数据
+    '''
+    def insertFundBasicInfos(self, datas = []):
+        return self.batchInsert("FUND_BASIC_COLLECTION", datas)
+    
+    '''
+    批量的向数据表格中插入数据，如果表格中有这些数据那么就不在插入
+    - Paramaters:
+        datas ： 代插入的数据，ALL_FUND_COMPANY_COLLECTION数据
+    - Return:
+        Flase: 当前所有的数据都不存在于表格中 
+        True: 当前的数据在表格中有重复数据
+    '''
+    def insertAllCompanyInfos(self, datas = []):
+        return self.batchInsert("ALL_FUND_COMPANY_COLLECTION", datas)
+
+    
+    def insertFundFinanceInfos(self, datas = []):
+        return self.batchInsert("FUND_FINANCE_COLLECTION", datas)
     
 
 global dataControl

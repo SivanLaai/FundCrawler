@@ -2,6 +2,7 @@ from Config import *
 from selenium.webdriver.common.by import By
 
 class AllFundCrawler_Selenium:
+
     def parserCurrentPage(self, x_path = '/html/body/div[7]/div[3]/table[2]/tbody/tr'):
         fund_infos = driver.find_elements(By.XPATH, x_path)
         f = open('fund_all.csv', 'w')
